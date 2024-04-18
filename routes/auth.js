@@ -161,12 +161,16 @@ router.post('/login', [
     let user = await User.findOne({ email });
     if (!user) {
       success = false;
-      return res.status(400).json({ success:false ,error: "Please try to login with correct credentials" });
+      return res.status(400).json({ success:false ,error: "Email doesnot Exist" });
     }
 
     const passwordCompare = await bcrypt.compare(password, user.password);
     if (!passwordCompare) {
       return res.status(400).json({ success:false , error: "Please try to login with correct credentials" });
+    }
+
+    if(!user.otp_verified){
+      return res.status(400).json({ success:false , error: "Your Account is not verified yet! Please Verify it" });
     }
 
     const data = {
